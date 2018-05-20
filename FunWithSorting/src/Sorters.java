@@ -1,47 +1,48 @@
 import java.util.Comparator;
 
-public class Sorters {
+public class Sorters<T, C extends Comparator<T>> {
 
-	public static void selectionSort(int[] numbers, Comparator<Integer> c) {
-		for (int i=0; i<numbers.length; i++) {
+	public void selectionSort(T[] elements, C c) {
+		for (int i=0; i<elements.length; i++) {
 			int posMin = i;
-			for (int j=i+1; j<numbers.length; j++) {
-				if (c.compare(numbers[j], numbers[posMin]) < 0) {
+			for (int j=i+1; j<elements.length; j++) {
+				if (c.compare(elements[j], elements[posMin]) < 0) {
 					posMin = j;
 				}
 			}
-			int temp = numbers[posMin];
-			numbers[posMin] = numbers[i];
-			numbers[i] = temp;
+			T temp = elements[posMin];
+			elements[posMin] = elements[i];
+			elements[i] = temp;
 		}
 	}
 	
-	public static void mergeSort(int[] numbers) {
-		if (numbers.length <= 1) {
+	public void mergeSort(T[] elements, C c) {
+		if (elements.length <= 1) {
 			return;
 		}
 		else {
-			int[] leftHalf = new int[numbers.length / 2];
-			int[] rightHalf = new int[numbers.length - leftHalf.length];
+			// Change to use ArrayLlist instead of array for type safety
+			T[] leftHalf = (T[])(new Object[elements.length / 2]);
+			T[] rightHalf = (T[]) (new Object[elements.length - leftHalf.length]);
 			for (int i=0; i<leftHalf.length; i++) {
-				leftHalf[i] = numbers[i];
+				leftHalf[i] = elements[i];
 			}
 			for (int i=0; i<rightHalf.length; i++) {
-				rightHalf[i] = numbers[leftHalf.length + i];
+				rightHalf[i] = elements[leftHalf.length + i];
 			}
-			mergeSort(leftHalf);
-			mergeSort(rightHalf);
-			merge(leftHalf, rightHalf, numbers);
+			mergeSort(leftHalf, c);
+			mergeSort(rightHalf, c);
+			merge(leftHalf, rightHalf, elements, c);
 		}
 	}
 	
-	public static void merge(int[] left, int[] right, int[] result) {
+	public void merge(T[] left, T[] right, T[] result, C c) {
 
 		int leftPos = 0;
 		int rightPos = 0;
 		int resultPos = 0;
 		while (leftPos<left.length && rightPos <right.length) {
-			if (left[leftPos] < right[rightPos]) {
+			if (c.compare(left[leftPos], right[rightPos]) < 0) {
 				result[resultPos] = left[leftPos];
 				leftPos++;
 			}
